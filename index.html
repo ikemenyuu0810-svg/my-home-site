@@ -1,0 +1,1181 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .dashboard {
+      width: 100%;
+      max-width: 1400px;
+      height: calc(100vh - 40px);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 20px;
+      grid-template-areas:
+        "timer clock notifications"
+        "timer memo todo";
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+    }
+
+    .card.expanded {
+      z-index: 10;
+    }
+
+    .card-compact {
+      display: block;
+    }
+
+    .card-expanded {
+      display: none;
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.expanded .card-compact {
+      display: none;
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.expanded .card-expanded {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    .timer-card {
+      grid-area: timer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+    }
+
+    .timer-card:hover {
+      transform: none;
+    }
+
+    .timer-wrapper {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      cursor: pointer;
+      margin-bottom: 40px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .timer-wrapper:hover {
+      transform: scale(1.03);
+    }
+
+    .timer-wrapper:active {
+      transform: scale(0.97);
+    }
+
+    .timer-display {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .timer-time {
+      font-size: 64px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #6366f1;
+      line-height: 1;
+      transition: all 0.3s ease;
+    }
+
+    .timer-wrapper:hover .timer-time {
+      transform: scale(1.05);
+    }
+
+    .timer-icon {
+      width: 40px;
+      height: 40px;
+      margin-top: 16px;
+      color: #6366f1;
+      opacity: 0.4;
+      transition: all 0.3s ease;
+    }
+
+    .timer-wrapper:hover .timer-icon {
+      opacity: 0.6;
+      transform: scale(1.1);
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: #f1f5f9;
+      stroke-width: 10;
+    }
+
+    .circle-progress {
+      fill: none;
+      stroke: #6366f1;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .timer-settings {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      animation: fadeInRow 0.5s ease backwards;
+    }
+
+    .settings-row:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .settings-row:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes fadeInRow {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .settings-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .time-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .time-input {
+      width: 70px;
+      padding: 10px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .time-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: scale(1.05);
+    }
+
+    .time-unit {
+      font-size: 14px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .btn-apply {
+      width: 100%;
+      padding: 12px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+      animation: fadeInRow 0.5s ease backwards 0.3s;
+    }
+
+    .btn-apply:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-apply:active {
+      transform: translateY(0);
+    }
+
+    .clock-card {
+      grid-area: clock;
+    }
+
+    .clock-compact {
+      text-align: center;
+    }
+
+    .clock-time-large {
+      font-size: 42px;
+      font-weight: 700;
+      color: #1e293b;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+    }
+
+    .clock-date {
+      font-size: 14px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .world-clocks {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .world-clock-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      animation: slideInLeft 0.5s ease backwards;
+    }
+
+    .world-clock-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .world-clock-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .world-clock-item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .world-clock-item:hover {
+      background: #f1f5f9;
+      transform: translateX(4px);
+    }
+
+    .clock-city {
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .clock-time {
+      font-size: 16px;
+      font-weight: 700;
+      color: #6366f1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .notifications-card {
+      grid-area: notifications;
+    }
+
+    .notification-compact {
+      text-align: center;
+    }
+
+    .status-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 14px;
+      color: #64748b;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover .status-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .status-icon.active {
+      color: #10b981;
+    }
+
+    .status-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+
+    .status-description {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .notification-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notification-item {
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+      animation: slideUp 0.4s ease backwards;
+    }
+
+    .notification-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .notification-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .status-active {
+      background: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.1);
+      }
+    }
+
+    .status-inactive {
+      background: #ef4444;
+    }
+
+    .status-pending {
+      background: #f59e0b;
+    }
+
+    .notification-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .notification-text {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .btn-notification {
+      width: 100%;
+      padding: 9px;
+      background: #f1f5f9;
+      color: #475569;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-notification:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+
+    .memo-card {
+      grid-area: memo;
+    }
+
+    .memo-card.expanded {
+      cursor: default;
+    }
+
+    .todo-card {
+      grid-area: todo;
+    }
+
+    .todo-card.expanded {
+      cursor: default;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 20px;
+      animation: slideUp 0.4s ease backwards;
+    }
+
+    .memo-textarea {
+      width: 100%;
+      height: calc(100% - 60px);
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1e293b;
+      resize: none;
+      transition: all 0.3s ease;
+      animation: slideUp 0.4s ease backwards 0.1s;
+    }
+
+    .memo-textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .memo-textarea::placeholder {
+      color: #cbd5e1;
+    }
+
+    .todo-input-wrapper {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      animation: slideUp 0.4s ease backwards 0.1s;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #1e293b;
+      transition: all 0.3s ease;
+    }
+
+    .todo-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .btn-add {
+      padding: 10px 20px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-add:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: calc(100% - 100px);
+      overflow-y: auto;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      animation: slideInRight 0.4s ease backwards;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .todo-item:hover {
+      background: #f1f5f9;
+      transform: translateX(-4px);
+    }
+
+    .todo-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .todo-checkbox:hover {
+      transform: scale(1.2);
+    }
+
+    .todo-text {
+      flex: 1;
+      font-size: 14px;
+      color: #1e293b;
+      transition: all 0.3s ease;
+    }
+
+    .todo-item.completed .todo-text {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .btn-delete {
+      padding: 6px 12px;
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .todo-item:hover .btn-delete {
+      opacity: 1;
+    }
+
+    .btn-delete:hover {
+      background: #fecaca;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+          "timer timer"
+          "clock notifications"
+          "memo todo";
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "timer"
+          "clock"
+          "notifications"
+          "memo"
+          "todo";
+      }
+
+      .timer-wrapper {
+        width: 280px;
+        height: 280px;
+      }
+
+      .timer-time {
+        font-size: 52px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- タイマー -->
+    <div class="card timer-card">
+      <div class="timer-wrapper" id="timer-wrapper">
+        <svg width="320" height="320">
+          <circle class="circle-bg" cx="160" cy="160" r="150"/>
+          <circle class="circle-progress" cx="160" cy="160" r="150" id="progress-circle"/>
+        </svg>
+        <div class="timer-display">
+          <div class="timer-time" id="timer-display">25:00</div>
+          <svg class="timer-icon" id="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="timer-settings">
+        <div class="settings-row">
+          <span class="settings-label">作業時間</span>
+          <div class="time-input-group">
+            <input type="number" class="time-input" id="work-minutes" value="25" min="1" max="120">
+            <span class="time-unit">分</span>
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">休憩時間</span>
+          <div class="time-input-group">
+            <input type="number" class="time-input" id="break-minutes" value="5" min="1" max="60">
+            <span class="time-unit">分</span>
+          </div>
+        </div>
+        <button class="btn-apply" id="apply-settings">設定を適用</button>
+      </div>
+    </div>
+
+    <!-- 時計 -->
+    <div class="card clock-card" id="clock-card">
+      <div class="card-compact clock-compact">
+        <div class="clock-time-large" id="clock-time-compact">00:00:00</div>
+        <div class="clock-date" id="clock-date-compact">2024年1月1日</div>
+      </div>
+
+      <div class="card-expanded">
+        <div class="card-title">時計</div>
+        <div style="text-align: center; margin-bottom: 28px;">
+          <div class="clock-time-large" id="clock-time-expanded">00:00:00</div>
+          <div class="clock-date" id="clock-date-expanded">2024年1月1日 月曜日</div>
+        </div>
+        <div class="world-clocks">
+          <div class="world-clock-item">
+            <span class="clock-city">Tokyo</span>
+            <span class="clock-time" id="tokyo-time">00:00:00</span>
+          </div>
+          <div class="world-clock-item">
+            <span class="clock-city">New York</span>
+            <span class="clock-time" id="ny-time">00:00:00</span>
+          </div>
+          <div class="world-clock-item">
+            <span class="clock-city">London</span>
+            <span class="clock-time" id="london-time">00:00:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 通知 -->
+    <div class="card notifications-card" id="notifications-card">
+      <div class="card-compact notification-compact">
+        <svg class="status-icon" id="status-icon-compact" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <div class="status-title">通知</div>
+        <div class="status-description" id="status-description-compact">未設定</div>
+      </div>
+
+      <div class="card-expanded">
+        <div class="card-title">通知設定</div>
+        <div class="notification-items">
+          <div class="notification-item">
+            <div class="notification-header">
+              <span class="status-dot" id="status-dot"></span>
+              <span class="notification-title" id="status-text">未設定</span>
+            </div>
+            <p class="notification-text">
+              タイマー終了時にデスクトップ通知を受け取れます
+            </p>
+            <button class="btn-notification" id="request-permission">
+              通知を許可する
+            </button>
+          </div>
+
+          <div class="notification-item">
+            <div class="notification-header">
+              <span class="notification-title">テスト</span>
+            </div>
+            <p class="notification-text">
+              通知が正しく動作するか確認できます
+            </p>
+            <button class="btn-notification" id="test-notification">
+              テスト通知を送信
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- メモ -->
+    <div class="card memo-card" id="memo-card">
+      <div class="card-compact" style="text-align: center;">
+        <div class="status-title">メモ</div>
+        <div class="status-description">クリックして編集</div>
+      </div>
+
+      <div class="card-expanded">
+        <div class="card-title">メモ</div>
+        <textarea class="memo-textarea" id="memo-textarea" placeholder="ここにメモを入力..."></textarea>
+      </div>
+    </div>
+
+    <!-- TODO -->
+    <div class="card todo-card" id="todo-card">
+      <div class="card-compact" style="text-align: center;">
+        <div class="status-title">TODO</div>
+        <div class="status-description" id="todo-count">0件のタスク</div>
+      </div>
+
+      <div class="card-expanded">
+        <div class="card-title">TODOリスト</div>
+        <div class="todo-input-wrapper">
+          <input type="text" class="todo-input" id="todo-input" placeholder="新しいタスク...">
+          <button class="btn-add" id="add-todo">追加</button>
+        </div>
+        <div class="todo-list" id="todo-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let pomodoroTimer = null;
+    let workMinutes = 25;
+    let breakMinutes = 5;
+    let timeLeft = workMinutes * 60;
+    let totalTime = workMinutes * 60;
+    let isWorkPhase = true;
+    let isRunning = false;
+
+    const circle = document.getElementById('progress-circle');
+    const circumference = 2 * Math.PI * 150;
+    circle.style.strokeDasharray = circumference;
+    circle.style.strokeDashoffset = 0;
+
+    function updateProgress() {
+      const progress = timeLeft / totalTime;
+      const offset = circumference * (1 - progress);
+      circle.style.strokeDashoffset = offset;
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timer-display').textContent = 
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      updateProgress();
+    }
+
+    function updateTimerIcon() {
+      const icon = document.getElementById('timer-icon');
+      if (isRunning) {
+        icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      } else {
+        icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+      }
+    }
+
+    document.getElementById('timer-wrapper').addEventListener('click', () => {
+      if (isRunning) {
+        clearInterval(pomodoroTimer);
+        isRunning = false;
+      } else {
+        isRunning = true;
+        pomodoroTimer = setInterval(() => {
+          timeLeft--;
+          updateTimerDisplay();
+
+          if (timeLeft <= 0) {
+            clearInterval(pomodoroTimer);
+            isRunning = false;
+            
+            if (isWorkPhase) {
+              sendNotification('作業完了', breakMinutes + '分間休憩しましょう');
+              timeLeft = breakMinutes * 60;
+              totalTime = breakMinutes * 60;
+              isWorkPhase = false;
+            } else {
+              sendNotification('休憩終了', '次の作業を始めましょう');
+              timeLeft = workMinutes * 60;
+              totalTime = workMinutes * 60;
+              isWorkPhase = true;
+            }
+            
+            updateTimerDisplay();
+            updateTimerIcon();
+          }
+        }, 1000);
+      }
+      updateTimerIcon();
+    });
+
+    document.getElementById('apply-settings').addEventListener('click', () => {
+      if (isRunning) {
+        alert('タイマー実行中は設定を変更できません');
+        return;
+      }
+
+      const newWork = parseInt(document.getElementById('work-minutes').value);
+      const newBreak = parseInt(document.getElementById('break-minutes').value);
+
+      if (newWork < 1 || newWork > 120) {
+        alert('作業時間は1〜120分の範囲で設定してください');
+        return;
+      }
+      if (newBreak < 1 || newBreak > 60) {
+        alert('休憩時間は1〜60分の範囲で設定してください');
+        return;
+      }
+
+      workMinutes = newWork;
+      breakMinutes = newBreak;
+      timeLeft = workMinutes * 60;
+      totalTime = workMinutes * 60;
+      isWorkPhase = true;
+      updateTimerDisplay();
+    });
+
+    document.getElementById('clock-card').addEventListener('click', function(e) {
+      if (e.target.closest('.world-clock-item')) return;
+      if (e.target.closest('.card-expanded')) return;
+      this.classList.toggle('expanded');
+    });
+
+    document.getElementById('notifications-card').addEventListener('click', function(e) {
+      if (e.target.tagName === 'BUTTON') return;
+      if (e.target.closest('.notification-item') && this.classList.contains('expanded')) return;
+      this.classList.toggle('expanded');
+    });
+
+    document.getElementById('memo-card').addEventListener('click', function(e) {
+      if (e.target.tagName === 'TEXTAREA' && this.classList.contains('expanded')) return;
+      this.classList.toggle('expanded');
+    });
+
+    document.getElementById('todo-card').addEventListener('click', function(e) {
+      if (e.target.closest('.todo-input-wrapper') && this.classList.contains('expanded')) return;
+      if (e.target.closest('.todo-list') && this.classList.contains('expanded')) return;
+      if (e.target.tagName === 'INPUT' && this.classList.contains('expanded')) return;
+      if (e.target.tagName === 'BUTTON' && this.classList.contains('expanded')) return;
+      this.classList.toggle('expanded');
+    });
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      const timeStr = h + ':' + m + ':' + s;
+      
+      document.getElementById('clock-time-compact').textContent = timeStr;
+      document.getElementById('clock-time-expanded').textContent = timeStr;
+      
+      const days = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+      const dateStr = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+      
+      document.getElementById('clock-date-compact').textContent = dateStr;
+      document.getElementById('clock-date-expanded').textContent = dateStr + ' ' + days[now.getDay()];
+      
+      document.getElementById('tokyo-time').textContent = 
+        now.toLocaleTimeString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false });
+      document.getElementById('ny-time').textContent = 
+        now.toLocaleTimeString('ja-JP', { timeZone: 'America/New_York', hour12: false });
+      document.getElementById('london-time').textContent = 
+        now.toLocaleTimeString('ja-JP', { timeZone: 'Europe/London', hour12: false });
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function updatePermissionStatus() {
+      const dot = document.getElementById('status-dot');
+      const statusText = document.getElementById('status-text');
+      const compactDesc = document.getElementById('status-description-compact');
+      const compactIcon = document.getElementById('status-icon-compact');
+      
+      if (!('Notification' in window)) {
+        dot.className = 'status-dot status-inactive';
+        statusText.textContent = '非対応';
+        compactDesc.textContent = '非対応';
+      } else if (Notification.permission === 'granted') {
+        dot.className = 'status-dot status-active';
+        statusText.textContent = '有効';
+        compactDesc.textContent = '有効';
+        compactIcon.classList.add('active');
+      } else if (Notification.permission === 'denied') {
+        dot.className = 'status-dot status-inactive';
+        statusText.textContent = '拒否';
+        compactDesc.textContent = '拒否';
+      } else {
+        dot.className = 'status-dot status-pending';
+        statusText.textContent = '未設定';
+        compactDesc.textContent = '未設定';
+      }
+    }
+
+    document.getElementById('request-permission').addEventListener('click', async function(e) {
+      e.stopPropagation();
+      if (!('Notification' in window)) {
+        alert('このブラウザは通知機能に対応していません');
+        return;
+      }
+      
+      const permission = await Notification.requestPermission();
+      updatePermissionStatus();
+      
+      if (permission === 'granted') {
+        sendNotification('通知が有効になりました', 'タイマー終了時に通知を受け取れます');
+      }
+    });
+
+    document.getElementById('test-notification').addEventListener('click', function(e) {
+      e.stopPropagation();
+      sendNotification('テスト通知', '通知が正常に動作しています');
+    });
+
+    function sendNotification(title, body) {
+      if (Notification.permission === 'granted') {
+        const notification = new Notification(title, {
+          body: body,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%236366f1"/></svg>',
+          tag: 'focus-hub'
+        });
+
+        notification.onclick = function() {
+          window.focus();
+          notification.close();
+        };
+
+        setTimeout(function() {
+          notification.close();
+        }, 5000);
+      }
+    }
+
+    const memoTextarea = document.getElementById('memo-textarea');
+    
+    memoTextarea.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    
+    memoTextarea.addEventListener('input', function() {
+      const memoValue = memoTextarea.value;
+      try {
+        localStorage.setItem('focus-hub-memo', memoValue);
+      } catch (e) {
+        console.log('保存失敗');
+      }
+    });
+
+    try {
+      const savedMemo = localStorage.getItem('focus-hub-memo');
+      if (savedMemo) {
+        memoTextarea.value = savedMemo;
+      }
+    } catch (e) {
+      console.log('読み込み失敗');
+    }
+
+    let todos = [];
+    try {
+      const savedTodos = localStorage.getItem('focus-hub-todos');
+      if (savedTodos) {
+        todos = JSON.parse(savedTodos);
+      }
+    } catch (e) {
+      console.log('TODO読み込み失敗');
+    }
+
+    function saveTodos() {
+      try {
+        localStorage.setItem('focus-hub-todos', JSON.stringify(todos));
+      } catch (e) {
+        console.log('TODO保存失敗');
+      }
+      updateTodoCount();
+    }
+
+    function updateTodoCount() {
+      document.getElementById('todo-count').textContent = todos.length + '件のタスク';
+    }
+
+    function renderTodos() {
+      const todoList = document.getElementById('todo-list');
+      todoList.innerHTML = '';
+      
+      if (todos.length === 0) {
+        updateTodoCount();
+        return;
+      }
+      
+      todos.forEach(function(todo, index) {
+        const todoItem = document.createElement('div');
+        todoItem.className = 'todo-item' + (todo.completed ? ' completed' : '');
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'todo-checkbox';
+        checkbox.checked = todo.completed;
+        checkbox.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+        checkbox.addEventListener('change', function() {
+          todos[index].completed = checkbox.checked;
+          saveTodos();
+          renderTodos();
+        });
+        
+        const todoText = document.createElement('span');
+        todoText.className = 'todo-text';
+        todoText.textContent = todo.text;
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn-delete';
+        deleteBtn.textContent = '削除';
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          todos.splice(index, 1);
+          saveTodos();
+          renderTodos();
+        });
+        
+        todoItem.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+        
+        todoItem.appendChild(checkbox);
+        todoItem.appendChild(todoText);
+        todoItem.appendChild(deleteBtn);
+        todoList.appendChild(todoItem);
+      });
+      
+      updateTodoCount();
+    }
+
+    document.getElementById('add-todo').addEventListener('click', function(e) {
+      e.stopPropagation();
+      const input = document.getElementById('todo-input');
+      const text = input.value.trim();
+      
+      if (text) {
+        todos.push({ text: text, completed: false });
+        saveTodos();
+        renderTodos();
+        input.value = '';
+      }
+    });
+
+    document.getElementById('todo-input').addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.getElementById('todo-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('add-todo').click();
+      }
+    });
+
+    updatePermissionStatus();
+    updateTimerDisplay();
+    updateTimerIcon();
+    updateTodoCount();
+    renderTodos();
+  </script>
+</body>
+</html>
