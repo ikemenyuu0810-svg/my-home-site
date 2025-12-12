@@ -1,4 +1,5 @@
-      <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -23,16 +24,15 @@
 
     .dashboard {
       width: 100%;
-      max-width: 1600px;
+      max-width: 1400px;
       height: calc(100vh - 40px);
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
       gap: 20px;
       grid-template-areas:
-        "pomodoro clock notifications"
-        "pomodoro timer stopwatch"
-        "memo todo music";
+        "timer clock notifications"
+        "timer memo todo";
     }
 
     .card {
@@ -67,13 +67,8 @@
       transform: translateY(-4px);
     }
 
-    .card.no-hover:hover {
-      transform: none;
-    }
-
     .card.expanded {
       z-index: 10;
-      cursor: default;
     }
 
     .card-compact {
@@ -82,11 +77,12 @@
 
     .card-expanded {
       display: none;
-      animation: slideUp 0.3s ease;
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .card.expanded .card-compact {
       display: none;
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .card.expanded .card-expanded {
@@ -96,7 +92,7 @@
     @keyframes slideUp {
       from {
         opacity: 0;
-        transform: translateY(15px);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
@@ -104,8 +100,19 @@
       }
     }
 
-    .pomodoro-card {
-      grid-area: pomodoro;
+    @keyframes slideDown {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    .timer-card {
+      grid-area: timer;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -113,7 +120,7 @@
       cursor: default;
     }
 
-    .pomodoro-card:hover {
+    .timer-card:hover {
       transform: none;
     }
 
@@ -149,6 +156,11 @@
       font-variant-numeric: tabular-nums;
       color: #6366f1;
       line-height: 1;
+      transition: all 0.3s ease;
+    }
+
+    .timer-wrapper:hover .timer-time {
+      transform: scale(1.05);
     }
 
     .timer-icon {
@@ -158,6 +170,11 @@
       color: #6366f1;
       opacity: 0.4;
       transition: all 0.3s ease;
+    }
+
+    .timer-wrapper:hover .timer-icon {
+      opacity: 0.6;
+      transform: scale(1.1);
     }
 
     .circle-bg {
@@ -186,6 +203,26 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 16px;
+      animation: fadeInRow 0.5s ease backwards;
+    }
+
+    .settings-row:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .settings-row:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes fadeInRow {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .settings-label {
@@ -216,6 +253,7 @@
       outline: none;
       border-color: #6366f1;
       box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: scale(1.05);
     }
 
     .time-unit {
@@ -236,6 +274,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       margin-top: 8px;
+      animation: fadeInRow 0.5s ease backwards 0.3s;
     }
 
     .btn-apply:hover {
@@ -244,20 +283,12 @@
       box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
 
+    .btn-apply:active {
+      transform: translateY(0);
+    }
+
     .clock-card {
       grid-area: clock;
-    }
-
-    .timer-card {
-      grid-area: timer;
-    }
-
-    .stopwatch-card {
-      grid-area: stopwatch;
-    }
-
-    .music-card {
-      grid-area: music;
     }
 
     .clock-compact {
@@ -292,6 +323,30 @@
       background: #f8fafc;
       border-radius: 12px;
       transition: all 0.3s ease;
+      animation: slideInLeft 0.5s ease backwards;
+    }
+
+    .world-clock-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .world-clock-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .world-clock-item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .world-clock-item:hover {
@@ -358,6 +413,15 @@
       padding: 16px;
       background: #f8fafc;
       border-radius: 12px;
+      animation: slideUp 0.4s ease backwards;
+    }
+
+    .notification-item:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .notification-item:nth-child(2) {
+      animation-delay: 0.2s;
     }
 
     .notification-header {
@@ -371,6 +435,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
+      transition: all 0.3s ease;
     }
 
     .status-active {
@@ -431,8 +496,16 @@
       grid-area: memo;
     }
 
+    .memo-card.expanded {
+      cursor: default;
+    }
+
     .todo-card {
       grid-area: todo;
+    }
+
+    .todo-card.expanded {
+      cursor: default;
     }
 
     .card-title {
@@ -440,6 +513,7 @@
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 20px;
+      animation: slideUp 0.4s ease backwards;
     }
 
     .memo-textarea {
@@ -453,6 +527,7 @@
       color: #1e293b;
       resize: none;
       transition: all 0.3s ease;
+      animation: slideUp 0.4s ease backwards 0.1s;
     }
 
     .memo-textarea:focus {
@@ -469,6 +544,7 @@
       display: flex;
       gap: 8px;
       margin-bottom: 16px;
+      animation: slideUp 0.4s ease backwards 0.1s;
     }
 
     .todo-input {
@@ -521,6 +597,18 @@
       background: #f8fafc;
       border-radius: 10px;
       transition: all 0.3s ease;
+      animation: slideInRight 0.4s ease backwards;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .todo-item:hover {
@@ -532,12 +620,18 @@
       width: 18px;
       height: 18px;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .todo-checkbox:hover {
+      transform: scale(1.2);
     }
 
     .todo-text {
       flex: 1;
       font-size: 14px;
       color: #1e293b;
+      transition: all 0.3s ease;
     }
 
     .todo-item.completed .todo-text {
@@ -564,138 +658,17 @@
 
     .btn-delete:hover {
       background: #fecaca;
+      transform: scale(1.05);
     }
 
-    .custom-timer-display {
-      text-align: center;
-      font-size: 48px;
-      font-weight: 700;
-      color: #6366f1;
-      font-variant-numeric: tabular-nums;
-      margin-bottom: 20px;
-    }
-
-    .timer-inputs {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .timer-input-small {
-      width: 60px;
-      padding: 8px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 14px;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .timer-input-small:focus {
-      outline: none;
-      border-color: #6366f1;
-    }
-
-    .timer-controls {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .btn-timer {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-      background: #6366f1;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #4f46e5;
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background: #f1f5f9;
-      color: #475569;
-    }
-
-    .btn-secondary:hover {
-      background: #e2e8f0;
-    }
-
-    .stopwatch-display {
-      text-align: center;
-      font-size: 48px;
-      font-weight: 700;
-      color: #6366f1;
-      font-variant-numeric: tabular-nums;
-      margin-bottom: 20px;
-    }
-
-    .lap-times {
-      max-height: 150px;
-      overflow-y: auto;
-      margin-top: 16px;
-    }
-
-    .lap-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: #f8fafc;
-      border-radius: 8px;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-
-    .music-player {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .music-btn {
-      padding: 16px;
-      background: #f8fafc;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      color: #1e293b;
-    }
-
-    .music-btn:hover {
-      background: #6366f1;
-      color: white;
-      transform: translateY(-2px);
-    }
-
-    .music-btn.active {
-      background: #6366f1;
-      color: white;
-    }
-
-    @media (max-width: 1400px) {
+    @media (max-width: 1200px) {
       .dashboard {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto;
+        grid-template-rows: auto auto auto;
         grid-template-areas:
-          "pomodoro pomodoro"
+          "timer timer"
           "clock notifications"
-          "timer stopwatch"
-          "memo todo"
-          "music music";
+          "memo todo";
       }
     }
 
@@ -703,14 +676,11 @@
       .dashboard {
         grid-template-columns: 1fr;
         grid-template-areas:
-          "pomodoro"
+          "timer"
           "clock"
           "notifications"
-          "timer"
-          "stopwatch"
           "memo"
-          "todo"
-          "music";
+          "todo";
       }
 
       .timer-wrapper {
@@ -726,8 +696,8 @@
 </head>
 <body>
   <div class="dashboard">
-    <!-- ポモドーロタイマー -->
-    <div class="card pomodoro-card no-hover">
+    <!-- タイマー -->
+    <div class="card timer-card">
       <div class="timer-wrapper" id="timer-wrapper">
         <svg width="320" height="320">
           <circle class="circle-bg" cx="160" cy="160" r="150"/>
@@ -832,49 +802,6 @@
       </div>
     </div>
 
-    <!-- カスタムタイマー -->
-    <div class="card timer-card" id="custom-timer-card">
-      <div class="card-compact" style="text-align: center;">
-        <div class="status-title">カスタムタイマー</div>
-        <div class="status-description">秒単位で設定可能</div>
-      </div>
-
-      <div class="card-expanded">
-        <div class="card-title">カスタムタイマー</div>
-        <div class="custom-timer-display" id="custom-timer-display">00:00:00</div>
-        <div class="timer-inputs">
-          <input type="number" class="timer-input-small" id="hours-input" placeholder="時" min="0" max="23" value="0">
-          <span style="font-size: 20px; font-weight: 600; color: #64748b;">:</span>
-          <input type="number" class="timer-input-small" id="minutes-input" placeholder="分" min="0" max="59" value="0">
-          <span style="font-size: 20px; font-weight: 600; color: #64748b;">:</span>
-          <input type="number" class="timer-input-small" id="seconds-input" placeholder="秒" min="0" max="59" value="0">
-        </div>
-        <div class="timer-controls">
-          <button class="btn-timer btn-primary" id="start-custom-timer">開始</button>
-          <button class="btn-timer btn-secondary" id="reset-custom-timer">リセット</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ストップウォッチ -->
-    <div class="card stopwatch-card" id="stopwatch-card">
-      <div class="card-compact" style="text-align: center;">
-        <div class="status-title">ストップウォッチ</div>
-        <div class="status-description">ラップタイム記録</div>
-      </div>
-
-      <div class="card-expanded">
-        <div class="card-title">ストップウォッチ</div>
-        <div class="stopwatch-display" id="stopwatch-display">00:00:00</div>
-        <div class="timer-controls">
-          <button class="btn-timer btn-primary" id="start-stopwatch">開始</button>
-          <button class="btn-timer btn-secondary" id="lap-stopwatch">ラップ</button>
-          <button class="btn-timer btn-secondary" id="reset-stopwatch">リセット</button>
-        </div>
-        <div class="lap-times" id="lap-times"></div>
-      </div>
-    </div>
-
     <!-- メモ -->
     <div class="card memo-card" id="memo-card">
       <div class="card-compact" style="text-align: center;">
@@ -904,28 +831,9 @@
         <div class="todo-list" id="todo-list"></div>
       </div>
     </div>
-
-    <!-- 集中音楽 -->
-    <div class="card music-card" id="music-card">
-      <div class="card-compact" style="text-align: center;">
-        <div class="status-title">集中音楽</div>
-        <div class="status-description">BGM で集中力アップ</div>
-      </div>
-
-      <div class="card-expanded">
-        <div class="card-title">集中音楽</div>
-        <div class="music-player">
-          <button class="music-btn" data-sound="rain">🌧️ 雨の音</button>
-          <button class="music-btn" data-sound="cafe">☕ カフェの音</button>
-          <button class="music-btn" data-sound="forest">🌲 森の音</button>
-          <button class="music-btn" data-sound="ocean">🌊 海の音</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
-    // ポモドーロタイマー
     let pomodoroTimer = null;
     let workMinutes = 25;
     let breakMinutes = 5;
@@ -1022,32 +930,31 @@
       updateTimerDisplay();
     });
 
-    // カード展開機能
-    function setupCard(cardId) {
-      const card = document.getElementById(cardId);
-      const compact = card.querySelector('.card-compact');
-      
-      compact.addEventListener('click', (e) => {
-        e.stopPropagation();
-        card.classList.add('expanded');
-      });
-      
-      card.addEventListener('click', (e) => {
-        if (card.classList.contains('expanded') && e.target === card) {
-          card.classList.remove('expanded');
-        }
-      });
-    }
+    document.getElementById('clock-card').addEventListener('click', function(e) {
+      if (e.target.closest('.world-clock-item')) return;
+      if (e.target.closest('.card-expanded')) return;
+      this.classList.toggle('expanded');
+    });
 
-    setupCard('clock-card');
-    setupCard('notifications-card');
-    setupCard('custom-timer-card');
-    setupCard('stopwatch-card');
-    setupCard('memo-card');
-    setupCard('todo-card');
-    setupCard('music-card');
+    document.getElementById('notifications-card').addEventListener('click', function(e) {
+      if (e.target.tagName === 'BUTTON') return;
+      if (e.target.closest('.notification-item') && this.classList.contains('expanded')) return;
+      this.classList.toggle('expanded');
+    });
 
-    // 時計
+    document.getElementById('memo-card').addEventListener('click', function(e) {
+      if (e.target.tagName === 'TEXTAREA' && this.classList.contains('expanded')) return;
+      this.classList.toggle('expanded');
+    });
+
+    document.getElementById('todo-card').addEventListener('click', function(e) {
+      if (e.target.closest('.todo-input-wrapper') && this.classList.contains('expanded')) return;
+      if (e.target.closest('.todo-list') && this.classList.contains('expanded')) return;
+      if (e.target.tagName === 'INPUT' && this.classList.contains('expanded')) return;
+      if (e.target.tagName === 'BUTTON' && this.classList.contains('expanded')) return;
+      this.classList.toggle('expanded');
+    });
+
     function updateClock() {
       const now = new Date();
       const h = String(now.getHours()).padStart(2, '0');
@@ -1075,7 +982,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 通知
     function updatePermissionStatus() {
       const dot = document.getElementById('status-dot');
       const statusText = document.getElementById('status-text');
@@ -1102,7 +1008,8 @@
       }
     }
 
-    document.getElementById('request-permission').addEventListener('click', async () => {
+    document.getElementById('request-permission').addEventListener('click', async function(e) {
+      e.stopPropagation();
       if (!('Notification' in window)) {
         alert('このブラウザは通知機能に対応していません');
         return;
@@ -1116,7 +1023,8 @@
       }
     });
 
-    document.getElementById('test-notification').addEventListener('click', () => {
+    document.getElementById('test-notification').addEventListener('click', function(e) {
+      e.stopPropagation();
       sendNotification('テスト通知', '通知が正常に動作しています');
     });
 
@@ -1128,132 +1036,27 @@
           tag: 'focus-hub'
         });
 
-        notification.onclick = () => {
+        notification.onclick = function() {
           window.focus();
           notification.close();
         };
 
-        setTimeout(() => notification.close(), 5000);
+        setTimeout(function() {
+          notification.close();
+        }, 5000);
       }
     }
 
-    // カスタムタイマー
-    let customTimer = null;
-    let customTimeLeft = 0;
-    let customRunning = false;
-
-    function updateCustomTimerDisplay() {
-      const hours = Math.floor(customTimeLeft / 3600);
-      const minutes = Math.floor((customTimeLeft % 3600) / 60);
-      const seconds = customTimeLeft % 60;
-      document.getElementById('custom-timer-display').textContent = 
-        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    document.getElementById('start-custom-timer').addEventListener('click', () => {
-      if (customRunning) {
-        clearInterval(customTimer);
-        customRunning = false;
-        document.getElementById('start-custom-timer').textContent = '開始';
-      } else {
-        if (customTimeLeft === 0) {
-          const hours = parseInt(document.getElementById('hours-input').value) || 0;
-          const minutes = parseInt(document.getElementById('minutes-input').value) || 0;
-          const seconds = parseInt(document.getElementById('seconds-input').value) || 0;
-          customTimeLeft = hours * 3600 + minutes * 60 + seconds;
-          
-          if (customTimeLeft === 0) {
-            alert('時間を設定してください');
-            return;
-          }
-        }
-        
-        customRunning = true;
-        document.getElementById('start-custom-timer').textContent = '停止';
-        
-        customTimer = setInterval(() => {
-          customTimeLeft--;
-          updateCustomTimerDisplay();
-          
-          if (customTimeLeft <= 0) {
-            clearInterval(customTimer);
-            customRunning = false;
-            document.getElementById('start-custom-timer').textContent = '開始';
-            sendNotification('タイマー終了', 'カスタムタイマーが終了しました');
-          }
-        }, 1000);
-      }
-      updateCustomTimerDisplay();
-    });
-
-    document.getElementById('reset-custom-timer').addEventListener('click', () => {
-      clearInterval(customTimer);
-      customRunning = false;
-      customTimeLeft = 0;
-      document.getElementById('start-custom-timer').textContent = '開始';
-      document.getElementById('hours-input').value = '0';
-      document.getElementById('minutes-input').value = '0';
-      document.getElementById('seconds-input').value = '0';
-      updateCustomTimerDisplay();
-    });
-
-    // ストップウォッチ
-    let stopwatchTimer = null;
-    let stopwatchTime = 0;
-    let stopwatchRunning = false;
-    let lapCount = 0;
-
-    function updateStopwatchDisplay() {
-      const hours = Math.floor(stopwatchTime / 3600);
-      const minutes = Math.floor((stopwatchTime % 3600) / 60);
-      const seconds = stopwatchTime % 60;
-      document.getElementById('stopwatch-display').textContent = 
-        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    document.getElementById('start-stopwatch').addEventListener('click', () => {
-      if (stopwatchRunning) {
-        clearInterval(stopwatchTimer);
-        stopwatchRunning = false;
-        document.getElementById('start-stopwatch').textContent = '再開';
-      } else {
-        stopwatchRunning = true;
-        document.getElementById('start-stopwatch').textContent = '停止';
-        
-        stopwatchTimer = setInterval(() => {
-          stopwatchTime++;
-          updateStopwatchDisplay();
-        }, 1000);
-      }
-    });
-
-    document.getElementById('lap-stopwatch').addEventListener('click', () => {
-      if (stopwatchRunning) {
-        lapCount++;
-        const lapTimes = document.getElementById('lap-times');
-        const lapItem = document.createElement('div');
-        lapItem.className = 'lap-item';
-        lapItem.innerHTML = `<span>ラップ ${lapCount}</span><span>${document.getElementById('stopwatch-display').textContent}</span>`;
-        lapTimes.insertBefore(lapItem, lapTimes.firstChild);
-      }
-    });
-
-    document.getElementById('reset-stopwatch').addEventListener('click', () => {
-      clearInterval(stopwatchTimer);
-      stopwatchRunning = false;
-      stopwatchTime = 0;
-      lapCount = 0;
-      document.getElementById('start-stopwatch').textContent = '開始';
-      document.getElementById('lap-times').innerHTML = '';
-      updateStopwatchDisplay();
-    });
-
-    // メモ
     const memoTextarea = document.getElementById('memo-textarea');
     
-    memoTextarea.addEventListener('input', () => {
+    memoTextarea.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    
+    memoTextarea.addEventListener('input', function() {
+      const memoValue = memoTextarea.value;
       try {
-        localStorage.setItem('focus-hub-memo', memoTextarea.value);
+        localStorage.setItem('focus-hub-memo', memoValue);
       } catch (e) {
         console.log('保存失敗');
       }
@@ -1268,7 +1071,6 @@
       console.log('読み込み失敗');
     }
 
-    // TODO
     let todos = [];
     try {
       const savedTodos = localStorage.getItem('focus-hub-todos');
@@ -1296,7 +1098,12 @@
       const todoList = document.getElementById('todo-list');
       todoList.innerHTML = '';
       
-      todos.forEach((todo, index) => {
+      if (todos.length === 0) {
+        updateTodoCount();
+        return;
+      }
+      
+      todos.forEach(function(todo, index) {
         const todoItem = document.createElement('div');
         todoItem.className = 'todo-item' + (todo.completed ? ' completed' : '');
         
@@ -1304,7 +1111,10 @@
         checkbox.type = 'checkbox';
         checkbox.className = 'todo-checkbox';
         checkbox.checked = todo.completed;
-        checkbox.addEventListener('change', () => {
+        checkbox.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+        checkbox.addEventListener('change', function() {
           todos[index].completed = checkbox.checked;
           saveTodos();
           renderTodos();
@@ -1317,10 +1127,15 @@
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'btn-delete';
         deleteBtn.textContent = '削除';
-        deleteBtn.addEventListener('click', () => {
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
           todos.splice(index, 1);
           saveTodos();
           renderTodos();
+        });
+        
+        todoItem.addEventListener('click', function(e) {
+          e.stopPropagation();
         });
         
         todoItem.appendChild(checkbox);
@@ -1332,7 +1147,8 @@
       updateTodoCount();
     }
 
-    document.getElementById('add-todo').addEventListener('click', () => {
+    document.getElementById('add-todo').addEventListener('click', function(e) {
+      e.stopPropagation();
       const input = document.getElementById('todo-input');
       const text = input.value.trim();
       
@@ -1344,38 +1160,20 @@
       }
     });
 
-    document.getElementById('todo-input').addEventListener('keypress', (e) => {
+    document.getElementById('todo-input').addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.getElementById('todo-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         document.getElementById('add-todo').click();
       }
     });
 
-    // 集中音楽（音は実際には鳴りませんが、UIは動作します）
-    let currentSound = null;
-    document.querySelectorAll('.music-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sound = btn.dataset.sound;
-        
-        if (currentSound === sound) {
-          btn.classList.remove('active');
-          currentSound = null;
-          alert(btn.textContent + ' を停止しました');
-        } else {
-          document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentSound = sound;
-          alert(btn.textContent + ' を再生中（デモ版のため実際の音は鳴りません）');
-        }
-      });
-    });
-
-    // 初期化
     updatePermissionStatus();
     updateTimerDisplay();
     updateTimerIcon();
-    updateCustomTimerDisplay();
-    updateStopwatchDisplay();
     updateTodoCount();
     renderTodos();
   </script>
