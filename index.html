@@ -19,6 +19,11 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
+      transition: background 0.3s ease;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     }
 
     .dashboard {
@@ -31,41 +36,77 @@
       gap: 20px;
     }
 
+    .theme-toggle {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 999;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    body.dark .theme-toggle {
+      background: #2d3748;
+    }
+
+    .theme-icon {
+      width: 28px;
+      height: 28px;
+      color: #6366f1;
+    }
+
+    body.dark .theme-icon {
+      color: #fbbf24;
+    }
+
     .card {
       background: white;
       border-radius: 24px;
       padding: 32px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
-      position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      min-height: 0;
+    }
+
+    body.dark .card {
+      background: #1e293b;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     }
 
     .card:hover {
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
       transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    body.dark .card:hover {
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
 
     .pomodoro-card {
       grid-column: 1;
       grid-row: 1 / 3;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: visible;
     }
 
     .pomodoro-card:hover {
       transform: none;
-    }
-
-    .clock-card {
-      grid-column: 2;
-      grid-row: 1;
     }
 
     .timer-wrapper {
@@ -74,8 +115,7 @@
       max-width: 300px;
       aspect-ratio: 1;
       cursor: pointer;
-      margin-bottom: 40px;
-      flex-shrink: 0;
+      margin-bottom: 30px;
     }
 
     .timer-wrapper:hover {
@@ -91,16 +131,16 @@
     }
 
     .timer-time {
-      font-size: 60px;
+      font-size: 56px;
       font-weight: 700;
       color: #6366f1;
       font-variant-numeric: tabular-nums;
     }
 
     .timer-icon {
-      width: 36px;
-      height: 36px;
-      margin-top: 12px;
+      width: 32px;
+      height: 32px;
+      margin-top: 10px;
       color: #6366f1;
       opacity: 0.4;
     }
@@ -109,6 +149,10 @@
       fill: none;
       stroke: #f1f5f9;
       stroke-width: 10;
+    }
+
+    body.dark .circle-bg {
+      stroke: #334155;
     }
 
     .circle-progress {
@@ -125,25 +169,37 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       width: 100%;
       max-width: 400px;
     }
 
     .settings-label {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: #64748b;
     }
 
+    body.dark .settings-label {
+      color: #94a3b8;
+    }
+
     .time-input {
       width: 70px;
-      padding: 10px;
+      padding: 8px;
       border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 15px;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 600;
       text-align: center;
+      background: white;
+      color: #1e293b;
+    }
+
+    body.dark .time-input {
+      background: #334155;
+      border-color: #475569;
+      color: #e2e8f0;
     }
 
     .time-input:focus {
@@ -152,10 +208,10 @@
     }
 
     .btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 12px;
-      font-size: 14px;
+      border-radius: 10px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -176,15 +232,28 @@
       color: #475569;
     }
 
+    body.dark .btn-secondary {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
     .btn-secondary:hover {
       background: #e2e8f0;
     }
 
+    body.dark .btn-secondary:hover {
+      background: #475569;
+    }
+
     .card-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       color: #1e293b;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+    }
+
+    body.dark .card-title {
+      color: #e2e8f0;
     }
 
     .card-content {
@@ -192,7 +261,6 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      overflow-x: hidden;
       min-height: 0;
     }
 
@@ -202,7 +270,10 @@
 
     .card-content::-webkit-scrollbar-track {
       background: #f1f5f9;
-      border-radius: 3px;
+    }
+
+    body.dark .card-content::-webkit-scrollbar-track {
+      background: #334155;
     }
 
     .card-content::-webkit-scrollbar-thumb {
@@ -210,43 +281,49 @@
       border-radius: 3px;
     }
 
-    .card-content::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+    body.dark .card-content::-webkit-scrollbar-thumb {
+      background: #475569;
     }
 
     .display-large {
-      font-size: 48px;
+      font-size: 42px;
       font-weight: 700;
       color: #6366f1;
       font-variant-numeric: tabular-nums;
       text-align: center;
-      margin-bottom: 20px;
-      flex-shrink: 0;
+      margin-bottom: 16px;
     }
 
     .controls {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      flex-shrink: 0;
     }
 
     .input-group {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       justify-content: center;
-      margin-bottom: 16px;
-      flex-shrink: 0;
+      align-items: center;
+      margin-bottom: 14px;
     }
 
     .input-small {
-      width: 60px;
+      width: 55px;
       padding: 8px;
       border: 2px solid #e2e8f0;
       border-radius: 8px;
       text-align: center;
       font-weight: 600;
+      background: white;
+      color: #1e293b;
+    }
+
+    body.dark .input-small {
+      background: #334155;
+      border-color: #475569;
+      color: #e2e8f0;
     }
 
     .input-small:focus {
@@ -254,15 +331,82 @@
       border-color: #6366f1;
     }
 
+    .clock-time {
+      font-size: 42px;
+      font-weight: 700;
+      color: #1e293b;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    body.dark .clock-time {
+      color: #e2e8f0;
+    }
+
+    .clock-date {
+      font-size: 13px;
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    body.dark .clock-date {
+      color: #94a3b8;
+    }
+
+    .world-clocks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .world-clock-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+
+    body.dark .world-clock-item {
+      background: #334155;
+    }
+
+    .world-clock-city {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    body.dark .world-clock-city {
+      color: #94a3b8;
+    }
+
+    .world-clock-time {
+      font-size: 13px;
+      font-weight: 700;
+      color: #6366f1;
+      font-variant-numeric: tabular-nums;
+    }
+
     .memo-textarea {
       width: 100%;
       flex: 1;
       border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 14px;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
       font-family: inherit;
       resize: none;
+      background: white;
+      color: #1e293b;
+    }
+
+    body.dark .memo-textarea {
+      background: #334155;
+      border-color: #475569;
+      color: #e2e8f0;
     }
 
     .memo-textarea:focus {
@@ -273,15 +417,22 @@
     .todo-input-wrapper {
       display: flex;
       gap: 8px;
-      margin-bottom: 16px;
-      flex-shrink: 0;
+      margin-bottom: 12px;
     }
 
     .todo-input {
       flex: 1;
-      padding: 10px;
+      padding: 8px;
       border: 2px solid #e2e8f0;
-      border-radius: 10px;
+      border-radius: 8px;
+      background: white;
+      color: #1e293b;
+    }
+
+    body.dark .todo-input {
+      background: #334155;
+      border-color: #475569;
+      color: #e2e8f0;
     }
 
     .todo-input:focus {
@@ -294,45 +445,35 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      min-height: 0;
-    }
-
-    .todo-list::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .todo-list::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 3px;
-    }
-
-    .todo-list::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-
-    .todo-list::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+      gap: 6px;
     }
 
     .todo-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px;
+      gap: 8px;
+      padding: 10px;
       background: #f8fafc;
-      border-radius: 10px;
+      border-radius: 8px;
+    }
+
+    body.dark .todo-item {
+      background: #334155;
     }
 
     .todo-checkbox {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
 
     .todo-text {
       flex: 1;
-      font-size: 14px;
+      font-size: 13px;
+      color: #1e293b;
+    }
+
+    body.dark .todo-text {
+      color: #e2e8f0;
     }
 
     .todo-item.completed .todo-text {
@@ -341,12 +482,12 @@
     }
 
     .btn-delete {
-      padding: 6px 12px;
+      padding: 4px 10px;
       background: #fee2e2;
       color: #ef4444;
       border: none;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
     }
@@ -354,141 +495,180 @@
     .lap-list {
       flex: 1;
       overflow-y: auto;
-      margin-top: 16px;
-      min-height: 0;
-    }
-
-    .lap-list::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .lap-list::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 3px;
-    }
-
-    .lap-list::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-
-    .lap-list::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+      margin-top: 12px;
     }
 
     .lap-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 12px;
+      padding: 8px;
       background: #f8fafc;
-      border-radius: 8px;
+      border-radius: 6px;
       margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    body.dark .lap-item {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    .volume-control {
+      margin-bottom: 16px;
+    }
+
+    .volume-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e2e8f0;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    body.dark .volume-slider {
+      background: #475569;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: none;
+    }
+
+    .volume-display {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: #6366f1;
+      margin-bottom: 16px;
+    }
+
+    .volume-label {
+      text-align: center;
       font-size: 13px;
+      color: #64748b;
+      margin-top: 8px;
     }
 
-    .music-buttons {
+    body.dark .volume-label {
+      color: #94a3b8;
+    }
+
+    .fullscreen-alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .fullscreen-alert.show {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
     }
 
-    .music-btn {
-      padding: 16px;
-      background: #f8fafc;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .alert-content {
+      text-align: center;
+      color: white;
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-title {
+      font-size: 64px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .alert-message {
+      font-size: 28px;
+      margin-bottom: 40px;
+      opacity: 0.8;
+    }
+
+    .alert-close {
+      padding: 16px 40px;
+      background: #6366f1;
+      color: white;
       border: none;
       border-radius: 12px;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
     }
 
-    .music-btn:hover {
-      background: #6366f1;
-      color: white;
-    }
-
-    .music-btn.active {
-      background: #6366f1;
-      color: white;
-    }
-
-    .clock-time {
-      font-size: 48px;
-      font-weight: 700;
-      color: #1e293b;
-      font-variant-numeric: tabular-nums;
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .clock-date {
-      font-size: 14px;
-      color: #64748b;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .world-clocks {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .world-clock-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px;
-      background: #f8fafc;
-      border-radius: 10px;
-    }
-
-    .world-clock-city {
-      font-size: 13px;
-      font-weight: 600;
-      color: #475569;
-    }
-
-    .world-clock-time {
-      font-size: 14px;
-      font-weight: 700;
-      color: #6366f1;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .status-active {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-    }
-
-    .status-inactive {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    .status-pending {
-      background: rgba(251, 191, 36, 0.2);
-      color: #f59e0b;
+    .alert-close:hover {
+      background: #4f46e5;
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
+  <button class="theme-toggle" id="theme-toggle">
+    <svg class="theme-icon" id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+
+  <div class="fullscreen-alert" id="fullscreen-alert">
+    <div class="alert-content">
+      <div class="alert-title" id="alert-title">時間です！</div>
+      <div class="alert-message" id="alert-message">作業時間が終了しました</div>
+      <button class="alert-close" id="alert-close">OK</button>
+    </div>
+  </div>
+
   <div class="dashboard">
     <!-- ポモドーロ -->
     <div class="card pomodoro-card">
       <div class="timer-wrapper" id="pomodoro-circle">
-        <svg width="300" height="300">
+        <svg width="100%" height="100%" viewBox="0 0 300 300">
           <circle class="circle-bg" cx="150" cy="150" r="140"/>
           <circle class="circle-progress" cx="150" cy="150" r="140" id="progress-circle"/>
         </svg>
@@ -508,16 +688,16 @@
           <span class="settings-label">休憩時間</span>
           <input type="number" class="time-input" id="break-time" value="5" min="1" max="60">
         </div>
-        <button class="btn btn-primary" id="apply-pomodoro" style="width: 100%; margin-top: 8px;">設定を適用</button>
+        <button class="btn btn-primary" id="apply-pomodoro" style="width: 100%;">設定を適用</button>
       </div>
     </div>
 
     <!-- 時計 -->
-    <div class="card clock-card">
+    <div class="card">
       <div class="card-title">時計</div>
       <div class="card-content">
         <div class="clock-time" id="clock-time">00:00:00</div>
-        <div class="clock-date" id="clock-date">2024年1月1日 月曜日</div>
+        <div class="clock-date" id="clock-date">2024年1月1日</div>
         <div class="world-clocks">
           <div class="world-clock-item">
             <span class="world-clock-city">Tokyo</span>
@@ -535,32 +715,15 @@
       </div>
     </div>
 
-    <!-- カスタムタイマー -->
+    <!-- 音量調整 -->
     <div class="card">
-      <div class="card-title">カスタムタイマー</div>
+      <div class="card-title">音量調整</div>
       <div class="card-content">
-        <div class="display-large" id="custom-display">00:00:00</div>
-        <div class="input-group">
-          <input type="number" class="input-small" id="ct-hours" placeholder="時" min="0" max="23" value="0">
-          <span style="font-size: 20px; font-weight: 600;">:</span>
-          <input type="number" class="input-small" id="ct-minutes" placeholder="分" min="0" max="59" value="0">
-          <span style="font-size: 20px; font-weight: 600;">:</span>
-          <input type="number" class="input-small" id="ct-seconds" placeholder="秒" min="0" max="59" value="0">
+        <div class="volume-display" id="volume-display">50%</div>
+        <div class="volume-control">
+          <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50">
         </div>
-        <div class="controls">
-          <button class="btn btn-primary" id="ct-start">開始</button>
-          <button class="btn btn-secondary" id="ct-reset">リセット</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 通知 -->
-    <div class="card">
-      <div class="card-title">通知設定</div>
-      <div class="card-content">
-        <div class="status-badge" id="notif-status">未設定</div>
-        <button class="btn btn-primary" id="notif-request" style="width: 100%; margin-bottom: 10px;">通知を許可</button>
-        <button class="btn btn-secondary" id="notif-test" style="width: 100%;">テスト通知</button>
+        <div class="volume-label">システム音量を調整</div>
       </div>
     </div>
 
@@ -598,22 +761,61 @@
       </div>
     </div>
 
-    <!-- 集中音楽 -->
+    <!-- カスタムタイマー -->
     <div class="card">
-      <div class="card-title">集中音楽</div>
+      <div class="card-title">カスタムタイマー</div>
       <div class="card-content">
-        <div class="music-buttons">
-          <button class="music-btn" data-sound="rain">🌧️ 雨の音</button>
-          <button class="music-btn" data-sound="cafe">☕ カフェの音</button>
-          <button class="music-btn" data-sound="forest">🌲 森の音</button>
-          <button class="music-btn" data-sound="ocean">🌊 海の音</button>
+        <div class="display-large" id="custom-display">00:00:00</div>
+        <div class="input-group">
+          <input type="number" class="input-small" id="ct-hours" placeholder="時" min="0" max="23" value="0">
+          <span style="font-weight: 600; color: #64748b;">:</span>
+          <input type="number" class="input-small" id="ct-minutes" placeholder="分" min="0" max="59" value="0">
+          <span style="font-weight: 600; color: #64748b;">:</span>
+          <input type="number" class="input-small" id="ct-seconds" placeholder="秒" min="0" max="59" value="0">
+        </div>
+        <div class="controls">
+          <button class="btn btn-primary" id="ct-start">開始</button>
+          <button class="btn btn-secondary" id="ct-reset">リセット</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ポモドーロタイマー
+    // テーマ切り替え
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const body = document.body;
+    
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+      body.classList.add('dark');
+      themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    }
+    
+    themeToggle.addEventListener('click', function() {
+      body.classList.toggle('dark');
+      if (body.classList.contains('dark')) {
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // フルスクリーンアラート
+    function showAlert(title, message) {
+      document.getElementById('alert-title').textContent = title;
+      document.getElementById('alert-message').textContent = message;
+      document.getElementById('fullscreen-alert').classList.add('show');
+    }
+
+    document.getElementById('alert-close').addEventListener('click', function() {
+      document.getElementById('fullscreen-alert').classList.remove('show');
+    });
+
+    // ポモドーロ
     let pomodoroInterval = null;
     let pomodoroTime = 25 * 60;
     let pomodoroTotal = 25 * 60;
@@ -623,6 +825,7 @@
     const circle = document.getElementById('progress-circle');
     const circ = 2 * Math.PI * 140;
     circle.style.strokeDasharray = circ;
+    circle.style.strokeDashoffset = 0;
 
     function updatePomodoro() {
       const m = Math.floor(pomodoroTime / 60);
@@ -642,7 +845,7 @@
       }
     }
 
-    document.getElementById('pomodoro-circle').onclick = function() {
+    document.getElementById('pomodoro-circle').addEventListener('click', function() {
       if (pomodoroRunning) {
         clearInterval(pomodoroInterval);
         pomodoroRunning = false;
@@ -655,13 +858,13 @@
             clearInterval(pomodoroInterval);
             pomodoroRunning = false;
             if (isWork) {
-              notify('作業完了', '休憩しましょう');
+              showAlert('作業完了！', '休憩時間です');
               const bt = parseInt(document.getElementById('break-time').value) || 5;
               pomodoroTime = bt * 60;
               pomodoroTotal = bt * 60;
               isWork = false;
             } else {
-              notify('休憩終了', '作業を始めましょう');
+              showAlert('休憩終了！', '次の作業を始めましょう');
               const wt = parseInt(document.getElementById('work-time').value) || 25;
               pomodoroTime = wt * 60;
               pomodoroTotal = wt * 60;
@@ -673,9 +876,9 @@
         }, 1000);
       }
       updatePomodoroIcon();
-    };
+    });
 
-    document.getElementById('apply-pomodoro').onclick = function() {
+    document.getElementById('apply-pomodoro').addEventListener('click', function() {
       if (pomodoroRunning) {
         alert('タイマー実行中は変更できません');
         return;
@@ -685,7 +888,7 @@
       pomodoroTotal = wt * 60;
       isWork = true;
       updatePomodoro();
-    };
+    });
 
     // カスタムタイマー
     let customInterval = null;
@@ -700,7 +903,7 @@
         String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
     }
 
-    document.getElementById('ct-start').onclick = function() {
+    document.getElementById('ct-start').addEventListener('click', function() {
       if (customRunning) {
         clearInterval(customInterval);
         customRunning = false;
@@ -725,14 +928,14 @@
             clearInterval(customInterval);
             customRunning = false;
             document.getElementById('ct-start').textContent = '開始';
-            notify('タイマー終了', 'カスタムタイマーが終了しました');
+            showAlert('タイマー終了！', 'カスタムタイマーが終了しました');
           }
         }, 1000);
       }
       updateCustom();
-    };
+    });
 
-    document.getElementById('ct-reset').onclick = function() {
+    document.getElementById('ct-reset').addEventListener('click', function() {
       clearInterval(customInterval);
       customRunning = false;
       customTime = 0;
@@ -741,7 +944,7 @@
       document.getElementById('ct-minutes').value = '0';
       document.getElementById('ct-seconds').value = '0';
       updateCustom();
-    };
+    });
 
     // ストップウォッチ
     let swInterval = null;
@@ -757,7 +960,7 @@
         String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
     }
 
-    document.getElementById('sw-start').onclick = function() {
+    document.getElementById('sw-start').addEventListener('click', function() {
       if (swRunning) {
         clearInterval(swInterval);
         swRunning = false;
@@ -770,20 +973,21 @@
           updateSW();
         }, 1000);
       }
-    };
+    });
 
-    document.getElementById('sw-lap').onclick = function() {
+    document.getElementById('sw-lap').addEventListener('click', function() {
       if (swRunning) {
         lapNum++;
         const div = document.createElement('div');
         div.className = 'lap-item';
         div.innerHTML = '<span>ラップ ' + lapNum + '</span><span>' + 
           document.getElementById('stopwatch-display').textContent + '</span>';
-        document.getElementById('lap-list').insertBefore(div, document.getElementById('lap-list').firstChild);
+        const list = document.getElementById('lap-list');
+        list.insertBefore(div, list.firstChild);
       }
-    };
+    });
 
-    document.getElementById('sw-reset').onclick = function() {
+    document.getElementById('sw-reset').addEventListener('click', function() {
       clearInterval(swInterval);
       swRunning = false;
       swTime = 0;
@@ -791,140 +995,7 @@
       document.getElementById('sw-start').textContent = '開始';
       document.getElementById('lap-list').innerHTML = '';
       updateSW();
-    };
-
-    // 通知
-    function updateNotifStatus() {
-      const badge = document.getElementById('notif-status');
-      if (!('Notification' in window)) {
-        badge.textContent = '非対応';
-        badge.className = 'status-badge status-inactive';
-      } else if (Notification.permission === 'granted') {
-        badge.textContent = '有効';
-        badge.className = 'status-badge status-active';
-      } else if (Notification.permission === 'denied') {
-        badge.textContent = '拒否';
-        badge.className = 'status-badge status-inactive';
-      } else {
-        badge.textContent = '未設定';
-        badge.className = 'status-badge status-pending';
-      }
-    }
-
-    document.getElementById('notif-request').onclick = async function() {
-      if (!('Notification' in window)) {
-        alert('このブラウザは通知に対応していません');
-        return;
-      }
-      const perm = await Notification.requestPermission();
-      updateNotifStatus();
-      if (perm === 'granted') {
-        notify('通知有効', '通知が有効になりました');
-      }
-    };
-
-    document.getElementById('notif-test').onclick = function() {
-      notify('テスト', '通知は正常に動作しています');
-    };
-
-    function notify(title, body) {
-      if (Notification.permission === 'granted') {
-        new Notification(title, { body: body });
-      }
-    }
-
-    // メモ
-    const memo = document.getElementById('memo');
-    memo.oninput = function() {
-      localStorage.setItem('memo', this.value);
-    };
-    memo.value = localStorage.getItem('memo') || '';
-
-    // TODO
-    let todos = JSON.parse(localStorage.getItem('todos') || '[]');
-
-    function saveTodos() {
-      localStorage.setItem('todos', JSON.stringify(todos));
-    }
-
-    function renderTodos() {
-      const list = document.getElementById('todo-list');
-      list.innerHTML = '';
-      todos.forEach(function(todo, i) {
-        const div = document.createElement('div');
-        div.className = 'todo-item' + (todo.done ? ' completed' : '');
-        
-        const check = document.createElement('input');
-        check.type = 'checkbox';
-        check.className = 'todo-checkbox';
-        check.checked = todo.done;
-        check.onchange = function() {
-          todos[i].done = this.checked;
-          saveTodos();
-          renderTodos();
-        };
-        
-        const text = document.createElement('span');
-        text.className = 'todo-text';
-        text.textContent = todo.text;
-        
-        const del = document.createElement('button');
-        del.className = 'btn-delete';
-        del.textContent = '削除';
-        del.onclick = function() {
-          todos.splice(i, 1);
-          saveTodos();
-          renderTodos();
-        };
-        
-        div.appendChild(check);
-        div.appendChild(text);
-        div.appendChild(del);
-        list.appendChild(div);
-      });
-    }
-
-    document.getElementById('todo-add').onclick = function() {
-      const input = document.getElementById('todo-input');
-      const text = input.value.trim();
-      if (text) {
-        todos.push({ text: text, done: false });
-        saveTodos();
-        renderTodos();
-        input.value = '';
-      }
-    };
-
-    document.getElementById('todo-input').onkeypress = function(e) {
-      if (e.key === 'Enter') {
-        document.getElementById('todo-add').click();
-      }
-    };
-
-    // 音楽
-    let currentMusic = null;
-    document.querySelectorAll('.music-btn').forEach(function(btn) {
-      btn.onclick = function() {
-        const sound = this.dataset.sound;
-        if (currentMusic === sound) {
-          this.classList.remove('active');
-          currentMusic = null;
-        } else {
-          document.querySelectorAll('.music-btn').forEach(function(b) {
-            b.classList.remove('active');
-          });
-          this.classList.add('active');
-          currentMusic = sound;
-        }
-      };
     });
-
-    // 初期化
-    updatePomodoro();
-    updateCustom();
-    updateSW();
-    updateNotifStatus();
-    renderTodos();
 
     // 時計
     function updateClock() {
@@ -951,6 +1022,94 @@
 
     setInterval(updateClock, 1000);
     updateClock();
+
+    // 音量調整
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeDisplay = document.getElementById('volume-display');
+    
+    const savedVolume = localStorage.getItem('volume') || '50';
+    volumeSlider.value = savedVolume;
+    volumeDisplay.textContent = savedVolume + '%';
+
+    volumeSlider.addEventListener('input', function() {
+      const vol = this.value;
+      volumeDisplay.textContent = vol + '%';
+      localStorage.setItem('volume', vol);
+    });
+
+    // メモ
+    const memo = document.getElementById('memo');
+    memo.value = localStorage.getItem('memo') || '';
+    memo.addEventListener('input', function() {
+      localStorage.setItem('memo', this.value);
+    });
+
+    // TODO
+    let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+
+    function saveTodos() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function renderTodos() {
+      const list = document.getElementById('todo-list');
+      list.innerHTML = '';
+      todos.forEach(function(todo, i) {
+        const div = document.createElement('div');
+        div.className = 'todo-item' + (todo.done ? ' completed' : '');
+        
+        const check = document.createElement('input');
+        check.type = 'checkbox';
+        check.className = 'todo-checkbox';
+        check.checked = todo.done;
+        check.addEventListener('change', function() {
+          todos[i].done = this.checked;
+          saveTodos();
+          renderTodos();
+        });
+        
+        const text = document.createElement('span');
+        text.className = 'todo-text';
+        text.textContent = todo.text;
+        
+        const del = document.createElement('button');
+        del.className = 'btn-delete';
+        del.textContent = '削除';
+        del.addEventListener('click', function() {
+          todos.splice(i, 1);
+          saveTodos();
+          renderTodos();
+        });
+        
+        div.appendChild(check);
+        div.appendChild(text);
+        div.appendChild(del);
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById('todo-add').addEventListener('click', function() {
+      const input = document.getElementById('todo-input');
+      const text = input.value.trim();
+      if (text) {
+        todos.push({ text: text, done: false });
+        saveTodos();
+        renderTodos();
+        input.value = '';
+      }
+    });
+
+    document.getElementById('todo-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('todo-add').click();
+      }
+    });
+
+    // 初期化
+    updatePomodoro();
+    updateCustom();
+    updateSW();
+    renderTodos();
   </script>
 </body>
 </html>
